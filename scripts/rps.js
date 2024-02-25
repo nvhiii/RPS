@@ -51,4 +51,7 @@ const roundOfGame = (playerSelection, computerSelection) => {
 
 }
 
+// implement a playGame fxn
+
 button.addEventListener("click", roundOfGame);
+
