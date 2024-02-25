@@ -11,10 +11,10 @@ function getComputerChoice() {
 
 }
 
-function singleRound() {
+function singleRound(playerSelection, computerSelection) {
 
-    let playerSelection = prompt("Please enter rock, paper, or scissors."); // enter selection before seeing computer choice
-    let computerSelection = getComputerChoice(); // computer choice stored here
+    playerSelection = prompt("Please enter rock, paper, or scissors."); // enter selection before seeing computer choice
+    computerSelection = getComputerChoice(); // computer choice stored here
 
     let winMap = { // object key-value pairing for wins
 
@@ -39,10 +39,14 @@ function singleRound() {
 
         } else if (winMap[formattedPlayerSelection] === computerSelection) { // player win
 
+            console.log(`Player wins!
+            Player choice: ${formattedPlayerSelection}, Computer choice: ${computerSelection}`);
             return "win";
 
         } else { // computer win
 
+            console.log(`Computer wins!
+            Player choice: ${formattedPlayerSelection}, Computer choice: ${computerSelection}`);
             return "loss";
 
         }
@@ -57,13 +61,42 @@ function singleRound() {
 
 function playGame() {
 
-    for (let i = 1; i < 5; i++) {
+    // if values aren't initialied, you cannot increment!!
+    let playerWins = 0;
+    let computerWins = 0;
+    let ties = 0;
+    alert(`Initiating a best of 5 rock-paper-scissors game...`);
 
-        singleRound();
+    for (let i = 0; i < 5; i++) {
 
+        let roundResult = singleRound();
+        if (roundResult === "win") {
+
+            playerWins++;
+
+        } else if (roundResult === "loss") {
+
+            computerWins++;
+
+        } else if (roundResult === "tie") {
+
+            ties++;
+
+        } else {
+
+            console.log(`Please enter a valid value`);
+
+        }
     }
 
+    // ternary logic
+    let winner = playerWins > computerWins ? "Player" : "Computer";
+    let loser = winner === "Player" ? "Computer" : "Player";
+    console.log(`The winner is ${winner}. The loser is ${loser}.`);
+
 }
+
+button.addEventListener("click", playGame);
 
 // test
 // let playa;
