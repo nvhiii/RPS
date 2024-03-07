@@ -1,106 +1,105 @@
-// revisited concise code
-const button = document.querySelector("button");
+// Rock Paper Scissors implementation
 
-// fxn declaration
-function getComputerChoice() {
+// game container selector
+const gameContainer = document.querySelector(`.game`);
+const gameRounds = document.querySelector(`.game-rounds`);
+const score = document.querySelector(`.score`);
+let uw = 0;
+let cw = 0;
+let tie = 0;
 
-    let choices = ["Rock", "Paper", "Scissors"];
-    let choiceNum = Math.floor(Math.random() * 3);
-    let computerChoice = choices[choiceNum];
-    return computerChoice;
+// computer selection fxn
+function computerSelection() {
+  const choices = [`ROCK`, `PAPER`, `SCISSORS`];
+  const arrayIndex = Math.floor(Math.random() * 3);
+  const choice = choices[arrayIndex];
 
+  return choice;
 }
 
-function singleRound(playerSelection, computerSelection) {
+function playRound(userChoice, computerChoice) {
+  const winMap = {
+    ROCK: "SCISSORS",
+    SCISSORS: "PAPER",
+    PAPER: "ROCK",
+  };
 
-    playerSelection = prompt("Please enter rock, paper, or scissors."); // enter selection before seeing computer choice
-    computerSelection = getComputerChoice(); // computer choice stored here
+  if (userChoice === computerChoice) {
+    const tieGame = document.createElement(`li`);
+    tieGame.textContent = `User chose ${userChoice} and computer chose ${computerChoice}, 
+                            hence, tie.`;
+    ++tie;
+    gameRounds.appendChild(tieGame);
+  } else if (winMap[userChoice] === computerChoice) {
+    const userWins = document.createElement(`li`);
+    userWins.textContent = `User chose ${userChoice} and computer chose ${computerChoice}, 
+                            hence, user wins!`;
+    ++uw;
+    gameRounds.appendChild(userWins);
+  } else {
+    const computerWins = document.createElement(`li`);
+    computerWins.textContent = `User chose ${userChoice} and computer chose ${computerChoice}, 
+                                hence, computer wins!`;
+    ++cw;
+    gameRounds.appendChild(computerWins);
+  }
 
-    let winMap = { // object key-value pairing for wins
+  if (uw === 5 || cw === 5) {
+    const winner = uw === 5 ? "User" : "Computer";
+    const winnerMessage = document.createElement(`li`);
+    winnerMessage.textContent = ` ${winner} is the winner! `;
+    gameRounds.appendChild(winnerMessage);
 
-        "Rock" : "Scissors",
-        "Scissors" : "Paper",
-        "Paper" : "Rock"
-    }
+    disableRPSButtons(); // Disable rock, paper, scissors buttons
 
-    // formatting so that user input follows map
-    let firstChar = playerSelection.charAt(0);
-    let restOfString = playerSelection.slice(1); // returns remaining string from index 1 to end
+    const resetButton = document.createElement(`button`);
+    resetButton.textContent = "Play Again";
+    resetButton.addEventListener(`click`, () => {
+      gameRounds.innerHTML = ""; // Clear list items
+      uw = 0;
+      cw = 0;
+      tie = 0;
+      score.textContent = `User: ${uw} Computer: ${cw} Tie: ${tie}`;
+      enableRPSButtons();
+      gameContainer.removeChild(resetButton); // Remove the button
+    });
+    gameContainer.appendChild(resetButton); // Append the button to the game container
+  }
 
-    let formattedPlayerSelection = `${firstChar.toUpperCase()}${restOfString.toLowerCase()}`;
-
-    // check if user selection is valid
-    if (winMap.hasOwnProperty(formattedPlayerSelection)) {
-
-        // tied logic
-        if (formattedPlayerSelection === computerSelection) {
-
-            return "tie";
-
-        } else if (winMap[formattedPlayerSelection] === computerSelection) { // player win
-
-            console.log(`Player wins!
-            Player choice: ${formattedPlayerSelection}, Computer choice: ${computerSelection}`);
-            return "win";
-
-        } else { // computer win
-
-            console.log(`Computer wins!
-            Player choice: ${formattedPlayerSelection}, Computer choice: ${computerSelection}`);
-            return "loss";
-
-        }
-
-    } else {
-
-        console.log("Please enter a valid value for rock, paper, and scissors!");
-
-    }
-
+  score.textContent = `User: ${uw} Computer: ${cw} Tie: ${tie}`;
 }
 
-function playGame() {
+// Button event listeners
+const rockButton = document.querySelector(`#rock`);
+const paperButton = document.querySelector(`#paper`);
+const scissorsButton = document.querySelector(`#scissors`);
 
-    // if values aren't initialied, you cannot increment!!
-    let playerWins = 0;
-    let computerWins = 0;
-    let ties = 0;
-    alert(`Initiating a best of 5 rock-paper-scissors game...`);
+rockButton.addEventListener(`click`, () => {
+  let computerChoice = computerSelection();
+  let userChoice = `ROCK`;
+  playRound(userChoice, computerChoice);
+});
 
-    for (let i = 0; i < 5; i++) {
+paperButton.addEventListener(`click`, () => {
+  let computerChoice = computerSelection();
+  let userChoice = `PAPER`;
+  playRound(userChoice, computerChoice);
+});
 
-        let roundResult = singleRound();
-        if (roundResult === "win") {
+scissorsButton.addEventListener(`click`, () => {
+  let computerChoice = computerSelection();
+  let userChoice = `SCISSORS`;
+  playRound(userChoice, computerChoice);
+});
 
-            playerWins++;
-
-        } else if (roundResult === "loss") {
-
-            computerWins++;
-
-        } else if (roundResult === "tie") {
-
-            ties++;
-
-        } else {
-
-            console.log(`Please enter a valid value`);
-
-        }
-    }
-
-    // ternary logic
-    let winner = playerWins > computerWins ? "Player" : "Computer";
-    let loser = winner === "Player" ? "Computer" : "Player";
-    console.log(`The winner is ${winner}. The loser is ${loser}.`);
-
+function disableRPSButtons() {
+  rockButton.disabled = true;
+  paperButton.disabled = true;
+  scissorsButton.disabled = true;
 }
 
-button.addEventListener("click", playGame);
-
-// test
-// let playa;
-// let computa;
-// console.log(singleRound(playa, computa));
-
-// button.addEventListener("click", singleRound);
+function enableRPSButtons() {
+  rockButton.disabled = false;
+  paperButton.disabled = false;
+  scissorsButton.disabled = false;
+}
